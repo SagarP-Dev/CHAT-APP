@@ -5,7 +5,7 @@ import SidebarSkeleton from "./skeletons/SidebarSkeleton";
 import { Users } from "lucide-react";
 
 const Sidebar = () => {
-  const { getUsers, users, selectedUser, setSelectedUser, isUsersLoading } = useChatStore();
+  const { getUsers, users, selectedUser, setSelectedUser, isUsersLoading, unreadMessages, markMessagesAsRead } = useChatStore();
 
   const { onlineUsers } = useAuthStore();
   const [showOnlineOnly, setShowOnlineOnly] = useState(false);
@@ -44,9 +44,12 @@ const Sidebar = () => {
 
       <div className="overflow-y-auto w-full py-3">
         {filteredUsers.map((user) => (
-          <button
-            key={user._id}
-            onClick={() => setSelectedUser(user)}
+  <button
+    key={user._id}
+    onClick={() => {
+      setSelectedUser(user);
+      markMessagesAsRead(user._id);
+    }}
             className={`
               w-full p-3 flex items-center gap-3
               hover:bg-base-300 transition-colors
@@ -74,6 +77,12 @@ const Sidebar = () => {
                 {onlineUsers.includes(user._id) ? "Online" : "Offline"}
               </div>
             </div>
+            {/* Unread message count */}
+    {unreadMessages[user._id] > 0 && (
+      <span className="absolute right-2 top-2 bg-red-500 text-white text-xs px-2 py-1 rounded-full">
+        {unreadMessages[user._id]}
+      </span>
+    )}
           </button>
         ))}
 

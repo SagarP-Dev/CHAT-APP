@@ -5,6 +5,7 @@ import { useAuthStore } from "./useAuthStore";
 
 export const useChatStore = create((set, get) => ({
   messages: [],
+  unreadMessages: {},
   users: [],
   selectedUser: null,
   isUsersLoading: false,
@@ -65,4 +66,15 @@ export const useChatStore = create((set, get) => ({
   },
 
   setSelectedUser: (selectedUser) => set({ selectedUser }),
+  setUnreadMessages: (userId, count) =>
+    set((state) => ({
+      unreadMessages: { ...state.unreadMessages, [userId]: count },
+    })),
+
+  markMessagesAsRead: (userId) =>
+    set((state) => {
+      const updatedUnread = { ...state.unreadMessages };
+      delete updatedUnread[userId]; // Clear unread count when opened
+      return { unreadMessages: updatedUnread };
+    }),
 }));
